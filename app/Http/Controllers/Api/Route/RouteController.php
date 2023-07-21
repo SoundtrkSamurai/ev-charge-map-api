@@ -10,6 +10,9 @@ class RouteController extends Controller
 {
     /**
      * Store a newly created resource in storage.
+     *
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
     {
@@ -26,41 +29,29 @@ class RouteController extends Controller
             return response()->json([
                 'message' => 'The reoute was added successfully.',
                 'route' => $route
-            ]);
+            ], 200);
         } catch (\Exception $e) {
+            logger('Error in RouteController.store', [$e->getMessage()]);
             return response()->json(['error' => 'Something went wrong saving the route.'], 400);
         }
     }
 
     /**
-     * Display the specified resource.
-     */
-    public function show(Route $route)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Route $route)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Route $route)
-    {
-        //
-    }
-
-    /**
      * Remove the specified resource from storage.
+     *
+     * @param int $route
+     * @return \Illuminate\Http\Response
      */
-    public function destroy(Route $route)
+    public function destroy($id)
     {
-        //
+        try {
+            $route = Route::findOrFail($id);
+            $route->delete();
+
+            return response()->json(['success' => 'The route was deleted successfully.'], 200);
+        } catch(\Exception $e) {
+            logger('Error in RouteController.destroy', [$e->getMessage()]);
+            return response()->json(['error' => 'Something went wrong deleting the saved route.'], 400);
+        }
     }
 }
